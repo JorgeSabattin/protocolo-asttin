@@ -86,6 +86,9 @@ canvas.pad{width:100%;height:130px;border:1px dashed #a9b1ab;border-radius:8px;b
 .modal .row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 .toast{position:fixed;bottom:76px;max-width:90vw;text-align:center;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:8px;font-size:13.5px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:60}
 .toast.on{opacity:1}
+.bio{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.biost{font-size:12.5px;margin-top:6px;color:var(--muted)}
+.biost.ok{color:var(--ok)}.biost.changed,.biost.bad{color:var(--bad)}
 .miss{outline:2px solid var(--bad)!important}
 @media (max-width:720px){
   .grid,.sig{grid-template-columns:1fr}
@@ -149,6 +152,8 @@ canvas.pad{width:100%;height:130px;border:1px dashed #a9b1ab;border-radius:8px;b
         <div class="sigtools"><span>Firme con el dedo o el mouse</span><button class="btn sm" type="button" data-clear="sigTec">Borrar</button></div>
         <label class="f" for="f_tec_n">Nombre</label><input id="f_tec_n" data-k="firmaTecNombre">
         <label class="f" for="f_tec_f" style="margin-top:8px">Fecha</label><input id="f_tec_f" data-k="firmaTecFecha" type="date">
+        <div class="bio"><button class="btn" type="button" id="bBio"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="vertical-align:-3px;margin-right:6px"><path d="M12 11c0 3-1 6-3 8"/><path d="M8 5.5A7 7 0 0 1 19 11c0 2-.3 4-1 6"/><path d="M5 9a7 7 0 0 1 1.5-2.5"/><path d="M5 13c0 2-.5 3.5-1.5 5"/><path d="M9 11a3 3 0 0 1 6 0c0 3-.5 5.5-2 8"/></svg><span id="bBioT">Confirmar con huella</span></button>
+        <div class="biost none" id="bioStatus"></div></div>
       </div>
       <div class="sigbox">
         <h3>Supervisor área / Cliente</h3>
@@ -291,6 +296,7 @@ function refresh(){
   const tot=ALL.length, pct=Math.round((tot-c.P)/tot*100);
   $("pbar").style.width=pct+"%"; $("pct").textContent=pct+"%";
   $("nC").textContent=c.C; $("nCN").textContent=c.CN; $("nNA").textContent=c.NA; $("nP").textContent=c.P;
+  if(typeof scheduleBio==="function") scheduleBio();
   return c;
 }
 let draftT;
@@ -341,25 +347,25 @@ function validate(){
 /* ---------- Exportación ---------- */
 function fieldsText(i){ const st=itemState(i.n); return (i.fields||[]).map(f=>{const v=st[f.k]; return v?`${f.lbl}: ${v}${f.unit?" "+f.unit:""}`:"";}).filter(Boolean).join("; "); }
 function fname(ext){ const g=state.general; return `Protocolo_${(g.estacion||"estacion").replace(/[^\w-]+/g,"_")}_${(g.fecha||"").slice(0,10)}.${ext}`; }
-function buildCSV(){
+function buildCSV(bv){
   const g=state.general, q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
   const rows=[["Proyecto/Mina",g.proyecto],["Código estación",g.estacion],["Fecha/Hora",g.fecha],["Técnico",g.tecnico],["Modelo equipo",g.modelo],[],["Ítem","Sección","Actividad","Estado","Valores","Observaciones"]];
   ALL.forEach(i=>{const st=itemState(i.n); rows.push([i.n,i.sec.title,i.t,LBL[st.estado||""],fieldsText(i),st.obs]);});
-  rows.push([],["Observaciones generales",g.obsGeneral],["Firma técnico",g.firmaTecNombre,g.firmaTecFecha],["Firma supervisor",g.firmaSupNombre,g.firmaSupFecha]);
+  rows.push([],["Observaciones generales",g.obsGeneral],["Firma técnico",g.firmaTecNombre,g.firmaTecFecha],["Firma supervisor",g.firmaSupNombre,g.firmaSupFecha],["Confirmación biométrica técnico",bv&&bv.st!=="none"?bioText(bv):"No"]);
   return "﻿"+rows.map(r=>r.map(q).join(";")).join("\r\n");
 }
-function buildReport(){
+function buildReport(bv){
   const g=state.general, c=refresh();
   const row=i=>{const st=itemState(i.n); const cls=st.estado==="C"?"ok":st.estado==="CN"?"bad":"";
     return `<tr><td>${i.n}</td><td>${esc(i.t)}</td><td class="${cls}">${LBL[st.estado||""]}</td><td>${esc(fieldsText(i))}${fieldsText(i)&&st.obs?"<br>":""}${esc(st.obs)}</td></tr>`;};
-  const sig=(src,n,f,t)=>`<div class="s"><div class="img">${src?`<img src="${src}">`:""}</div><b>${t}</b><br>Nombre: ${esc(n)}<br>Fecha: ${esc(f)}</div>`;
+  const sig=(src,n,f,t)=>`<div class="s"><div class="img">${src?`<img src="${src}">`:""}</div><b>${t}</b><br>Nombre: ${esc(n)}<br>Fecha: ${esc(f)}${t.includes("Técnico")&&bv&&bv.st!=="none"?`<div class="bv ${bv.st==="ok"?"ok":"bad"}">${esc(bioText(bv))}</div>`:""}</div>`;
   return `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>${esc(fname("html"))}</title><style>
   body{font-family:Arial,sans-serif;font-size:11pt;color:#111;max-width:800px;margin:20px auto;padding:0 14px}
   h1{font-size:15pt;margin:0}h2{font-size:11pt;background:#16324f;color:#fff;padding:5px 8px;margin:16px 0 0}
   table{width:100%;border-collapse:collapse}td,th{border:1px solid #999;padding:4px 6px;vertical-align:top;font-size:10pt}
   th{background:#eee;text-align:left}td:nth-child(3){text-align:center;font-weight:bold;width:44px}td:first-child{width:34px}
   .ok{color:#1f7a4d}.bad{color:#b3261e;background:#fbe9e7}.gen td{width:auto!important;text-align:left!important;font-weight:normal!important}
-  .sigs{display:flex;gap:20px;margin-top:10px}.s{flex:1;font-size:10pt}.img{height:80px;border-bottom:1px solid #333;margin-bottom:4px}.img img{height:80px}
+  .bv{margin-top:6px;font-size:8.5pt;border:1px solid currentColor;border-radius:4px;padding:3px 5px}.sigs{display:flex;gap:20px;margin-top:10px}.s{flex:1;font-size:10pt}.img{height:80px;border-bottom:1px solid #333;margin-bottom:4px}.img img{height:80px}
   @media print{body{margin:0}}</style></head><body>
   <h1>PROTOCOLO DE MANTENIMIENTO TRIMESTRAL</h1><div>Instrumentación Sísmica / Acelerógrafos · ASTTIN</div>
   <h2>INFORMACIÓN GENERAL</h2><table class="gen">
@@ -380,15 +386,15 @@ function offer(filename, data){
     setTimeout(()=>URL.revokeObjectURL(url),4000); toast("Descargando "+filename);
   }catch(_){ toast("No se pudo generar la descarga."); }
 }
-function printReport(){
+function printReport(bv){
   const fr=document.createElement("iframe"); fr.style.cssText="position:fixed;right:0;bottom:0;width:0;height:0;border:0";
-  document.body.appendChild(fr); const d=fr.contentDocument; d.open(); d.write(buildReport()); d.close();
+  document.body.appendChild(fr); const d=fr.contentDocument; d.open(); d.write(buildReport(bv)); d.close();
   const go=()=>{ try{ fr.contentWindow.focus(); fr.contentWindow.print(); }catch(_){ toast("No se pudo abrir la impresión."); } setTimeout(()=>fr.remove(),60000); };
   const imgs=[...d.images]; Promise.all(imgs.map(i=>i.complete?1:new Promise(r=>{i.onload=i.onerror=r;}))).then(()=>setTimeout(go,150));
 }
-$("bCsv").onclick=()=>{ readAll(); offer(fname("csv"), buildCSV()); };
-$("bRep").onclick=()=>{ readAll(); offer(fname("html"), buildReport()); };
-$("bPrint").onclick=()=>{ readAll(); printReport(); };
+$("bCsv").onclick=async()=>{ readAll(); offer(fname("csv"), buildCSV(await verifyBio(state.bio))); };
+$("bRep").onclick=async()=>{ readAll(); const bv=await verifyBio(state.bio); offer(fname("html"), buildReport(bv)); };
+$("bPrint").onclick=async()=>{ readAll(); printReport(await verifyBio(state.bio)); };
 
 /* ---------- Historial local (en este dispositivo) ---------- */
 const HKEY="asttin_protocolos";
@@ -440,6 +446,98 @@ $("fImp").onchange=async e=>{
   }catch(_){ toast("El archivo no es un respaldo válido."); }
 };
 loadHist(); renderHist();
+
+/* ---------- Confirmación biométrica (WebAuthn, local) ---------- */
+const b64u=buf=>{const a=new Uint8Array(buf);let s="";for(const x of a)s+=String.fromCharCode(x);return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");};
+const unb64u=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")+"===".slice((s.length+3)%4)),c=>c.charCodeAt(0));
+const stable=o=>Array.isArray(o)?"["+o.map(stable).join(",")+"]":(o&&typeof o==="object")?"{"+Object.keys(o).sort().map(k=>JSON.stringify(k)+":"+stable(o[k])).join(",")+"}":JSON.stringify(o??"");
+async function sha(data){ return new Uint8Array(await crypto.subtle.digest("SHA-256", typeof data==="string"?new TextEncoder().encode(data):data)); }
+function bioPayload(){ const g={...state.general}; delete g.firmaSupNombre; delete g.firmaSupFecha; return stable({g, items:state.items, sigTec:state.firmas?.sigTec||""}); }
+function derToRaw(d){ let i=2; if(d[1]&0x80) i+=d[1]&0x7f;
+  const rd=()=>{ i++; const len=d[i++]; let v=d.slice(i,i+len); i+=len; while(v.length>32&&v[0]===0) v=v.slice(1); const o=new Uint8Array(32); o.set(v,32-v.length); return o; };
+  const r=rd(), s=rd(), out=new Uint8Array(64); out.set(r); out.set(s,32); return out; }
+const LKEY="asttin_llaves";
+const getLlaves=()=>{ try{ return JSON.parse(localStorage.getItem(LKEY)||"[]"); }catch(_){ return []; } };
+const setLlaves=l=>{ try{ localStorage.setItem(LKEY,JSON.stringify(l)); }catch(_){} };
+function bioErr(e){ const n=e?.name;
+  if(n==="NotAllowedError") return "Confirmación cancelada o no reconocida.";
+  if(n==="InvalidStateError") return "Esta huella ya estaba registrada en el equipo.";
+  if(n==="SecurityError") return "La huella solo funciona en el sitio publicado (https).";
+  if(n==="NotSupportedError") return "Este dispositivo no admite confirmación biométrica.";
+  return "No se pudo completar la confirmación."; }
+async function registrarLlave(nombre){
+  const cred=await navigator.credentials.create({publicKey:{
+    challenge:crypto.getRandomValues(new Uint8Array(32)),
+    rp:{name:"Protocolo ASTTIN"},
+    user:{id:crypto.getRandomValues(new Uint8Array(16)), name:nombre, displayName:nombre},
+    pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],
+    authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required",residentKey:"preferred"},
+    timeout:90000, attestation:"none"}});
+  const r=cred.response; let pk="",alg=null;
+  try{ if(r.getPublicKey){ const p=r.getPublicKey(); if(p) pk=b64u(p); } if(r.getPublicKeyAlgorithm) alg=r.getPublicKeyAlgorithm(); }catch(_){}
+  const k={id:b64u(cred.rawId), nombre, pk, alg, creado:new Date().toISOString()};
+  setLlaves([...getLlaves().filter(x=>x.nombre.toLowerCase()!==nombre.toLowerCase()), k]);
+  return k;
+}
+async function confirmarHuella(){
+  readAll();
+  const nombre=(state.general.firmaTecNombre||state.general.tecnico||"").trim();
+  if(!nombre){ toast("Escriba el nombre del técnico antes de confirmar."); $("f_tec_n").focus(); return; }
+  let k=getLlaves().find(x=>x.nombre.toLowerCase()===nombre.toLowerCase());
+  if(!k){
+    const ok=await modal("Registrar huella",`<p>Es la primera vez de <b>${esc(nombre)}</b> en este equipo. Se creará una llave de acceso protegida con la huella (o el desbloqueo biométrico) del dispositivo.</p><p style="font-size:13px;color:#5e6a66">La huella nunca sale del dispositivo: la app solo recibe la confirmación. Se pedirá la huella dos veces: una para registrar y otra para confirmar.</p>`,[["Cancelar",false],["Registrar",true,"pri"]]);
+    if(!ok) return;
+    try{ k=await registrarLlave(nombre); }catch(e){ toast(bioErr(e)); return; }
+  }
+  const h=await sha(bioPayload());
+  try{
+    const a=await navigator.credentials.get({publicKey:{challenge:h, allowCredentials:[{type:"public-key",id:unb64u(k.id)}], userVerification:"required", timeout:90000}});
+    const r=a.response, ad=new Uint8Array(r.authenticatorData);
+    state.bio={nombre:k.nombre, credId:k.id, pk:k.pk, alg:k.alg, fecha:new Date().toISOString(), hash:b64u(h),
+      authData:b64u(r.authenticatorData), clientData:b64u(r.clientDataJSON), sig:b64u(r.signature), uv:!!(ad[32]&0x04)};
+    dirty(true); saveDraft(); await bioCheck(); toast("Protocolo confirmado con huella.");
+  }catch(e){
+    if(e?.name==="NotAllowedError"){
+      const re=await modal("No se pudo confirmar",`<p>Se canceló o el dispositivo no reconoció la huella. Si el registro de <b>${esc(nombre)}</b> se borró del equipo, puede registrarlo de nuevo.</p>`,[["Cerrar",false],["Registrar de nuevo",true,"pri"]]);
+      if(re){ setLlaves(getLlaves().filter(x=>x.id!==k.id)); confirmarHuella(); }
+    } else toast(bioErr(e));
+  }
+}
+async function verifyBio(b){
+  if(!b) return {st:"none"};
+  try{
+    if(b64u(await sha(bioPayload()))!==b.hash) return {st:"changed",b};
+    const cd=JSON.parse(new TextDecoder().decode(unb64u(b.clientData)));
+    if(cd.type!=="webauthn.get"||cd.challenge!==b.hash||!b.uv) return {st:"bad",b};
+    if(!b.pk||![-7,-257].includes(b.alg)) return {st:"ok",b,verified:false};
+    const ad=unb64u(b.authData), ch=await sha(unb64u(b.clientData)), data=new Uint8Array(ad.length+ch.length); data.set(ad); data.set(ch,ad.length);
+    let ok;
+    if(b.alg===-7){ const key=await crypto.subtle.importKey("spki",unb64u(b.pk),{name:"ECDSA",namedCurve:"P-256"},false,["verify"]); ok=await crypto.subtle.verify({name:"ECDSA",hash:"SHA-256"},key,derToRaw(unb64u(b.sig)),data); }
+    else { const key=await crypto.subtle.importKey("spki",unb64u(b.pk),{name:"RSASSA-PKCS1-v1_5",hash:"SHA-256"},false,["verify"]); ok=await crypto.subtle.verify("RSASSA-PKCS1-v1_5",key,unb64u(b.sig),data); }
+    return ok?{st:"ok",b,verified:true}:{st:"bad",b};
+  }catch(_){ return {st:"bad",b}; }
+}
+const codigo=b=>b.hash.slice(0,12).toUpperCase().replace(/(.{4})(?=.)/g,"$1-");
+const fmtF=iso=>{ const d=new Date(iso); return isNaN(d)?"":d.toLocaleString("es-CL",{dateStyle:"short",timeStyle:"short"}); };
+function bioText(v){
+  if(v.st==="ok") return `Confirmado con biometría del dispositivo · ${v.b.nombre} · ${fmtF(v.b.fecha)} · Código ${codigo(v.b)}${v.verified?" · firma criptográfica verificada":""}`;
+  if(v.st==="changed") return "Protocolo modificado después de la confirmación biométrica: confirmación no vigente.";
+  if(v.st==="bad") return "Confirmación biométrica no válida.";
+  return "";
+}
+let bioAvail=false, bioT;
+async function bioCheck(){
+  const v=await verifyBio(state.bio), el=$("bioStatus"), btn=$("bBio");
+  el.className="biost "+v.st;
+  if(!bioAvail){ el.textContent=window.isSecureContext?"Este dispositivo o navegador no tiene confirmación biométrica disponible.":"La confirmación con huella funciona en el sitio publicado (https)."; btn.disabled=true; }
+  else { btn.disabled=false;
+    el.textContent = v.st==="none" ? "Opcional: el técnico confirma el protocolo con su huella al terminar." : (v.st==="changed"?"✕ ":v.st==="ok"?"✓ ":"✕ ")+bioText(v); }
+  $("bBioT").textContent = v.st==="none" ? "Confirmar con huella" : "Volver a confirmar con huella";
+  return v;
+}
+function scheduleBio(){ clearTimeout(bioT); bioT=setTimeout(bioCheck,300); }
+$("bBio").onclick=confirmarHuella;
+(async()=>{ try{ bioAvail=!!(window.PublicKeyCredential && window.isSecureContext && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); }catch(_){ bioAvail=false; } bioCheck(); })();
 
 /* ---------- Inicio ---------- */
 try{ const d=JSON.parse(localStorage.getItem("asttin_draft")||"null"); if(d?.state){ state=d.state; state.firmas ||= {sigTec:"",sigSup:""}; currentId=d.currentId||null; } }catch(_){}
