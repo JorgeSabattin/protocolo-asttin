@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#16324f">
+<title>Protocolo de Mantenimiento Trimestral – ASTTIN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f4f1;--card:#fff;--ink:#1c2321;--muted:#5e6a66;--line:#d9ddd8;
+  --brand:#16324f;--brand2:#22507d;--accent:#e08a1e;
+  --ok:#1f7a4d;--okbg:#e5f3ec;--bad:#b3261e;--badbg:#fbe9e7;--na:#6b6f76;--nabg:#eceef0;
+  --r:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"IBM Plex Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45}
+header{background:var(--brand);color:#fff;padding:18px 20px 14px;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.hwrap{max-width:980px;margin:0 auto;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.logo{font-family:"IBM Plex Mono",monospace;font-weight:500;letter-spacing:.12em;background:var(--accent);color:var(--brand);padding:6px 10px;border-radius:6px;font-size:14px}
+header h1{font-size:18px;margin:0;font-weight:600;letter-spacing:.01em}
+header .sub{font-size:13px;opacity:.8}
+.prog{flex:1 1 220px;min-width:200px}
+.bar{height:8px;background:rgba(255,255,255,.18);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+.pinfo{font-size:12px;margin-top:5px;display:flex;gap:12px;opacity:.9;flex-wrap:wrap}
+.pinfo b{font-family:"IBM Plex Mono",monospace;font-weight:500}
+main{max-width:980px;margin:0 auto;padding:18px 14px 120px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:16px;overflow:hidden}
+.card>h2{margin:0;font-size:15px;font-weight:600;background:#eef1f4;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.card>h2 small{font-weight:400;color:var(--muted);font-size:13px}
+.card>h2 .cnt{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);font-weight:500}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;padding:16px}
+.grid .full{grid-column:1/-1}
+label.f{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+input,select,textarea{font:inherit;color:inherit;width:100%;padding:9px 10px;border:1px solid #c5cbc6;border-radius:8px;background:#fff}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--brand2);outline-offset:0;border-color:var(--brand2)}
+textarea{resize:vertical;min-height:44px}
+.item{display:grid;grid-template-columns:44px 1fr 190px;gap:10px 14px;padding:14px 16px;border-top:1px solid var(--line);align-items:start}
+.item:first-of-type{border-top:0}
+.num{font-family:"IBM Plex Mono",monospace;font-weight:500;color:var(--brand2);padding-top:9px}
+.act{padding-top:8px;font-weight:500}
+.extra{grid-column:2/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.extra .lbl{font-size:12px;color:var(--muted);margin-bottom:3px}
+.unit{position:relative}
+.unit input{padding-right:42px}
+.unit span{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);font-family:"IBM Plex Mono",monospace}
+select.st{font-weight:600;cursor:pointer}
+select.st.C{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+select.st.CN{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+select.st.NA{background:var(--nabg);border-color:var(--na);color:var(--na)}
+.item.CN{background:#fffaf9}
+.warn{font-size:12.5px;color:var(--bad);margin-top:4px;display:none}
+.warn.on{display:block}
+.hint{font-size:12.5px;color:#8a5a00;background:#fff4e0;border:1px solid #f1d39c;border-radius:6px;padding:5px 8px;margin-top:6px;display:none}
+.hint.on{display:block}
+.legend{font-size:13px;color:var(--muted);padding:0 2px 12px}
+.sig{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px}
+.sigbox h3{font-size:13px;margin:0 0 8px;font-weight:600}
+canvas.pad{width:100%;height:130px;border:1px dashed #a9b1ab;border-radius:8px;background:#fcfcfa;touch-action:none;display:block}
+.sigtools{display:flex;justify-content:space-between;align-items:center;margin:4px 0 8px;font-size:12px;color:var(--muted)}
+.btn{font:inherit;font-weight:600;border:1px solid var(--brand);background:#fff;color:var(--brand);padding:9px 14px;border-radius:8px;cursor:pointer;white-space:nowrap}
+.btn:hover{background:#eef3f8}
+.btn.pri{background:var(--brand);color:#fff}
+.btn.pri:hover{background:var(--brand2)}
+.btn.sm{padding:4px 9px;font-size:12px;font-weight:500}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.actions{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-top:1px solid var(--line);padding:10px 14px;z-index:20}
+.actions .aw{max-width:980px;margin:0 auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.actions .sp{flex:1}
+.status{font-size:12.5px;color:var(--muted)}
+.hist{padding:8px 16px 16px}
+.hist table{width:100%;border-collapse:collapse;font-size:13.5px}
+.hist th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);border-bottom:1px solid var(--line);padding:6px 6px}
+.hist td{border-bottom:1px solid #eceeea;padding:8px 6px;vertical-align:middle}
+.tag{font-family:"IBM Plex Mono",monospace;font-size:12px;padding:2px 7px;border-radius:99px}
+.tag.ok{background:var(--okbg);color:var(--ok)}.tag.bad{background:var(--badbg);color:var(--bad)}
+.empty{color:var(--muted);font-size:13.5px;padding:8px 0}
+.modal{position:fixed;inset:0;background:rgba(20,28,26,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal.on{display:flex}
+.modal .box{background:#fff;border-radius:12px;max-width:520px;width:100%;padding:20px;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.modal h3{margin:0 0 8px;font-size:16px}
+.modal ul{margin:8px 0 14px;padding-left:20px;font-size:14px;max-height:260px;overflow:auto}
+.modal .row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.toast{position:fixed;bottom:76px;max-width:90vw;text-align:center;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:8px;font-size:13.5px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:60}
+.toast.on{opacity:1}
+.miss{outline:2px solid var(--bad)!important}
+@media (max-width:720px){
+  .grid,.sig{grid-template-columns:1fr}
+  .item{grid-template-columns:36px 1fr}
+  .item .stw{grid-column:2/-1}
+  .extra{grid-column:2/-1}
+  header{padding:10px 12px}
+  header h1{font-size:15px}
+  header .sub,.logo{display:none}
+  .actions{padding:8px}
+  .actions .aw{flex-wrap:nowrap;gap:6px}
+  .actions .btn{padding:8px 9px;font-size:13px}
+  .actions .sp,.status{display:none}
+  .actions .btn.pri{margin-left:auto}
+  main{padding-bottom:90px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <span class="logo">ASTTIN</span>
+    <div>
+      <h1>Protocolo de Mantenimiento Trimestral</h1>
+      <div class="sub">Instrumentación Sísmica / Acelerógrafos</div>
+    </div>
+    <div class="prog">
+      <div class="bar"><i id="pbar"></i></div>
+      <div class="pinfo"><span>Avance <b id="pct">0%</b></span><span>C <b id="nC">0</b></span><span>CN <b id="nCN">0</b></span><span>N/A <b id="nNA">0</b></span><span>Pendientes <b id="nP">0</b></span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <h2>Información general</h2>
+    <div class="grid">
+      <div><label class="f" for="g_proyecto">Proyecto / Mina</label><input id="g_proyecto" data-k="proyecto" autocomplete="off"></div>
+      <div><label class="f" for="g_estacion">Código de estación</label><input id="g_estacion" data-k="estacion" autocomplete="off"></div>
+      <div><label class="f" for="g_fecha">Fecha / Hora</label><input id="g_fecha" data-k="fecha" type="datetime-local"></div>
+      <div><label class="f" for="g_tecnico">Técnico responsable</label><input id="g_tecnico" data-k="tecnico" autocomplete="off"></div>
+      <div class="full"><label class="f" for="g_modelo">Modelo equipo (Sensor / Digitalizador)</label><input id="g_modelo" data-k="modelo" list="modelos" autocomplete="off" placeholder="Ej.: Titan / Centaur"></div>
+    </div>
+  </section>
+
+  <p class="legend">Los protocolos se guardan en este dispositivo; use <b>Exportar respaldo</b> para traspasarlos o consolidarlos. En cada ítem seleccione: <b>C</b> = Cumple · <b>CN</b> = No Cumple (detallar en observaciones) · <b>N/A</b> = No aplica.</p>
+
+  <div id="sections"></div>
+
+  <section class="card">
+    <h2>Observaciones generales / Recomendaciones <small>Detallar anomalías que requieran repuestos o visita correctiva</small></h2>
+    <div class="grid"><div class="full"><textarea id="g_obs" data-k="obsGeneral" rows="5"></textarea></div></div>
+  </section>
+
+  <section class="card">
+    <h2>Firmas de conformidad</h2>
+    <div class="sig">
+      <div class="sigbox">
+        <h3>Técnico ASTTIN</h3>
+        <canvas class="pad" id="sigTec"></canvas>
+        <div class="sigtools"><span>Firme con el dedo o el mouse</span><button class="btn sm" type="button" data-clear="sigTec">Borrar</button></div>
+        <label class="f" for="f_tec_n">Nombre</label><input id="f_tec_n" data-k="firmaTecNombre">
+        <label class="f" for="f_tec_f" style="margin-top:8px">Fecha</label><input id="f_tec_f" data-k="firmaTecFecha" type="date">
+      </div>
+      <div class="sigbox">
+        <h3>Supervisor área / Cliente</h3>
+        <canvas class="pad" id="sigSup"></canvas>
+        <div class="sigtools"><span>Firme con el dedo o el mouse</span><button class="btn sm" type="button" data-clear="sigSup">Borrar</button></div>
+        <label class="f" for="f_sup_n">Nombre</label><input id="f_sup_n" data-k="firmaSupNombre">
+        <label class="f" for="f_sup_f" style="margin-top:8px">Fecha</label><input id="f_sup_f" data-k="firmaSupFecha" type="date">
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="histCard">
+    <h2><span>Protocolos guardados <span class="cnt" id="histInfo"></span></span><span><button class="btn sm" type="button" id="bBak">Exportar respaldo</button> <button class="btn sm" type="button" id="bImp">Importar respaldo</button><input type="file" id="fImp" accept=".json,application/json" hidden></span></h2>
+    <div class="hist" id="hist"><div class="empty">Cargando…</div></div>
+  </section>
+</main>
+
+<datalist id="modelos">
+  <option value="Nanometrics Titan / Centaur">
+  <option value="Nanometrics Titan / Pegasus">
+  <option value="Nanometrics Obsidian">
+  <option value="Nanometrics Titan SMA">
+</datalist>
+
+<div class="actions"><div class="aw">
+  <button class="btn" type="button" id="bNew">Nuevo</button>
+  <span class="status" id="status"></span>
+  <span class="sp"></span>
+  <button class="btn" type="button" id="bCsv">CSV</button>
+  <button class="btn" type="button" id="bRep">Informe</button>
+  <button class="btn" type="button" id="bPrint">Imprimir / PDF</button>
+  <button class="btn pri" type="button" id="bSave">Guardar</button>
+</div></div>
+
+<div class="modal" id="modal"><div class="box">
+  <h3 id="mTitle"></h3>
+  <div id="mBody"></div>
+  <div class="row" id="mBtns"></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- Definición del protocolo (desde la planilla) ---------- */
+const SECTIONS = [
+  {id:"s1", title:"1. Seguridad y entorno (HSE)", note:"Antes de intervenir, asegurar área segura según estándar mina.", obsLabel:"Observaciones / Acción tomada", items:[
+    {n:"1.1", t:"Análisis de Riesgos (ART/HC) completado y firmado."},
+    {n:"1.2", t:"Estado del cerco perimetral y candados."},
+    {n:"1.3", t:"Limpieza de maleza o escombros en el área del sensor."},
+    {n:"1.4", t:"Inspección visual de cables (mordeduras, cristalización UV)."}
+  ]},
+  {id:"s2", title:"2. Sistema de energía", note:"Crítico para continuidad operativa.", obsLabel:"Detalle", items:[
+    {n:"2.1", t:"Limpieza de panel solar: retiro de polvo / chusca."},
+    {n:"2.2", t:"Voltaje panel solar (Voc): medir desconectado.", fields:[{k:"v", lbl:"Valor medido", type:"number", unit:"V", step:"0.01"}]},
+    {n:"2.3", t:"Voltaje banco baterías (carga): con sistema operando.", fields:[{k:"v", lbl:"Valor medido", type:"number", unit:"V", step:"0.01"}]},
+    {n:"2.4", t:"Revisión de bornes: limpieza de sulfatación y reapriete."},
+    {n:"2.5", t:"Estado del regulador de carga (luces / indicadores OK)."}
+  ]},
+  {id:"s3", title:"3. Instrumentación geofísica (sensor)", note:"Foco: acelerómetro (Nanometrics Titan / Obsidian).", obsLabel:"Datos técnicos", items:[
+    {n:"3.1", t:"Nivelación física: verificar burbuja del sensor. ¿Centrada?", fields:[{k:"desv", lbl:"Desviación estimada", type:"text"}]},
+    {n:"3.2", t:"Orientación (azimut): verificar alineación al Norte (flecha N).", fields:[{k:"corr", lbl:"Corrección realizada", type:"select", opts:["Sí","No"]}]},
+    {n:"3.3", t:"Acoplamiento: verificar anclaje firme al pilar/radier (sin juego)."},
+    {n:"3.4", t:"Estado de conectores: revisión de pines y sellos en cable sensor."}
+  ]},
+  {id:"s4", title:"4. Digitalizador y telemetría", note:"Validación de calidad de dato y transmisión.", obsLabel:"Valor / Estado", items:[
+    {n:"4.1", t:"Estado GPS: ¿Timing Lock / Phase Lock activo?", fields:[{k:"sat", lbl:"Satélites visibles", type:"number", step:"1"}]},
+    {n:"4.2", t:"Calidad de reloj: error de tiempo (offset) < 10 ms.", fields:[{k:"off", lbl:"Offset", type:"number", unit:"ms", step:"0.01"}], check:(f)=>{const x=parseFloat(f.off);return isNaN(x)?null:(Math.abs(x)<10?"C":"CN");}, checkMsg:"Offset ≥ 10 ms: corresponde marcar CN."},
+    {n:"4.3", t:"Almacenamiento local: capacidad libre en SD / disco.", fields:[{k:"gb", lbl:"Libre", type:"number", unit:"GB", step:"0.1"}]}
+  ]},
+  {id:"s5", title:"5. Cierre y certificación (QA/QC)", note:"", obsLabel:"Observaciones", items:[
+    {n:"5.1", t:"Prueba de pulso (calibration pulse): ejecutada exitosamente."},
+    {n:"5.2", t:"Registro fotográfico: panorámica, sensor (nivel), tablero abierto."},
+    {n:"5.3", t:"Limpieza final: gabinetes cerrados, sellos de humedad OK."}
+  ]}
+];
+const ALL = SECTIONS.flatMap(s=>s.items.map(i=>({...i,sec:s})));
+const STATES = [["","— Seleccione —"],["C","C – Cumple"],["CN","CN – No cumple"],["NA","N/A – No aplica"]];
+const LBL = {C:"C",CN:"CN",NA:"N/A","":"—"};
+
+/* ---------- Render ---------- */
+const $ = id=>document.getElementById(id);
+const esc = s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function renderSections(){
+  $("sections").innerHTML = SECTIONS.map(s=>`
+  <section class="card">
+    <h2><span>${esc(s.title)} ${s.note?`<small>— ${esc(s.note)}</small>`:""}</span><span class="cnt" id="cnt_${s.id}"></span></h2>
+    ${s.items.map(i=>{
+      const id=i.n.replace(".","_");
+      const fields=(i.fields||[]).map(f=>{
+        const fid=`f_${id}_${f.k}`;
+        let ctl;
+        if(f.type==="select") ctl=`<select id="${fid}" data-item="${i.n}" data-field="${f.k}"><option value="">— Seleccione —</option>${f.opts.map(o=>`<option>${o}</option>`).join("")}</select>`;
+        else ctl=`<div class="${f.unit?"unit":""}"><input id="${fid}" data-item="${i.n}" data-field="${f.k}" type="${f.type}" ${f.step?`step="${f.step}" inputmode="decimal"`:""}>${f.unit?`<span>${f.unit}</span>`:""}</div>`;
+        return `<div><div class="lbl"><label for="${fid}">${esc(f.lbl)}</label></div>${ctl}</div>`;
+      }).join("");
+      return `<div class="item" id="it_${id}">
+        <div class="num">${i.n}</div>
+        <div class="act">${esc(i.t)}</div>
+        <div class="stw"><select class="st" id="st_${id}" data-item="${i.n}" data-field="estado" aria-label="Estado ítem ${i.n}">${STATES.map(([v,l])=>`<option value="${v}">${l}</option>`).join("")}</select>
+          <div class="warn" id="w_${id}">Detalle obligatorio en observaciones.</div></div>
+        <div class="extra">${fields}
+          <div style="grid-column:1/-1"><div class="lbl"><label for="f_${id}_obs">${esc(s.obsLabel)}</label></div><textarea id="f_${id}_obs" data-item="${i.n}" data-field="obs" rows="1"></textarea>
+          <div class="hint" id="h_${id}"></div></div>
+        </div>
+      </div>`;}).join("")}
+  </section>`).join("");
+}
+renderSections();
+
+/* ---------- Estado ---------- */
+let state = blank();
+let currentId = null;
+function blank(){
+  const now=new Date(); now.setMinutes(now.getMinutes()-now.getTimezoneOffset());
+  return {general:{fecha:now.toISOString().slice(0,16)}, items:{}, firmas:{sigTec:"",sigSup:""}};
+}
+function itemState(n){ return state.items[n] ||= {estado:"",obs:""}; }
+
+function readAll(){
+  document.querySelectorAll("[data-k]").forEach(el=>{state.general[el.dataset.k]=el.value;});
+  document.querySelectorAll("[data-item]").forEach(el=>{itemState(el.dataset.item)[el.dataset.field]=el.value;});
+}
+function writeAll(){
+  document.querySelectorAll("[data-k]").forEach(el=>{el.value=state.general[el.dataset.k]??"";});
+  document.querySelectorAll("[data-item]").forEach(el=>{el.value=(state.items[el.dataset.item]||{})[el.dataset.field]??"";});
+  pads.sigTec.load(state.firmas?.sigTec||""); pads.sigSup.load(state.firmas?.sigSup||"");
+  refresh();
+}
+function refresh(){
+  let c={C:0,CN:0,NA:0,P:0};
+  ALL.forEach(i=>{
+    const id=i.n.replace(".","_"), st=itemState(i.n);
+    const sel=$("st_"+id); sel.className="st "+(st.estado||"");
+    $("it_"+id).classList.toggle("CN",st.estado==="CN");
+    $("w_"+id).classList.toggle("on",st.estado==="CN" && !String(st.obs||"").trim());
+    if(i.check){ const sug=i.check(st); const h=$("h_"+id);
+      const on = sug==="CN" && st.estado!=="CN"; h.textContent=i.checkMsg; h.classList.toggle("on",on); }
+    if(st.estado) c[st.estado]++; else c.P++;
+  });
+  SECTIONS.forEach(s=>{ const done=s.items.filter(i=>itemState(i.n).estado).length; $("cnt_"+s.id).textContent=`${done}/${s.items.length}`; });
+  const tot=ALL.length, pct=Math.round((tot-c.P)/tot*100);
+  $("pbar").style.width=pct+"%"; $("pct").textContent=pct+"%";
+  $("nC").textContent=c.C; $("nCN").textContent=c.CN; $("nNA").textContent=c.NA; $("nP").textContent=c.P;
+  return c;
+}
+let draftT;
+document.addEventListener("input",e=>{
+  if(!e.target.matches("[data-k],[data-item]")) return;
+  readAll(); refresh(); dirty(true);
+  clearTimeout(draftT); draftT=setTimeout(saveDraft,400);
+});
+document.addEventListener("change",e=>{ if(e.target.matches("select")){ readAll(); refresh(); dirty(true); saveDraft(); }});
+function saveDraft(){ try{ localStorage.setItem("asttin_draft",JSON.stringify({state,currentId})); }catch(_){} }
+function dirty(v){ $("status").textContent = v ? (currentId?"Cambios sin guardar":"Borrador (sin guardar)") : (currentId?"Guardado":""); }
+
+/* ---------- Firma ---------- */
+function Pad(cv){
+  const ctx=cv.getContext("2d"); let drawing=false, has=false, last=null, img="";
+  function size(){ const r=cv.getBoundingClientRect(), d=window.devicePixelRatio||1;
+    cv.width=r.width*d; cv.height=r.height*d; ctx.setTransform(d,0,0,d,0,0);
+    ctx.lineWidth=2; ctx.lineCap="round"; ctx.strokeStyle="#16324f"; if(img) draw(img); }
+  function draw(src){ const im=new Image(); im.onload=()=>{const r=cv.getBoundingClientRect(); ctx.clearRect(0,0,r.width,r.height); ctx.drawImage(im,0,0,r.width,r.height);}; im.src=src; }
+  const pos=e=>{const r=cv.getBoundingClientRect(); return [e.clientX-r.left,e.clientY-r.top];};
+  cv.addEventListener("pointerdown",e=>{drawing=true; last=pos(e); cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener("pointermove",e=>{ if(!drawing) return; const p=pos(e); ctx.beginPath(); ctx.moveTo(...last); ctx.lineTo(...p); ctx.stroke(); last=p; has=true; });
+  const end=()=>{ if(!drawing) return; drawing=false; if(has){ img=cv.toDataURL("image/png"); state.firmas[cv.id]=img; dirty(true); saveDraft(); } };
+  cv.addEventListener("pointerup",end); cv.addEventListener("pointercancel",end);
+  new ResizeObserver(size).observe(cv);
+  return { clear(){ const r=cv.getBoundingClientRect(); ctx.clearRect(0,0,r.width,r.height); img=""; has=false; state.firmas[cv.id]=""; },
+           load(src){ img=src; has=!!src; const r=cv.getBoundingClientRect(); ctx.clearRect(0,0,r.width,r.height); if(src) draw(src); } };
+}
+const pads={sigTec:Pad($("sigTec")), sigSup:Pad($("sigSup"))};
+document.querySelectorAll("[data-clear]").forEach(b=>b.onclick=()=>{pads[b.dataset.clear].clear(); dirty(true); saveDraft();});
+
+/* ---------- UI helpers ---------- */
+function toast(m){ const t=$("toast"); t.textContent=m; t.classList.add("on"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("on"),2600); }
+function modal(title, html, btns){
+  $("mTitle").textContent=title; $("mBody").innerHTML=html; $("mBtns").innerHTML="";
+  return new Promise(res=>{ btns.forEach(([l,v,cls])=>{ const b=document.createElement("button"); b.className="btn "+(cls||""); b.textContent=l; b.onclick=()=>{$("modal").classList.remove("on"); res(v);}; $("mBtns").appendChild(b); }); $("modal").classList.add("on"); });
+}
+function validate(){
+  const errs=[]; document.querySelectorAll(".miss").forEach(e=>e.classList.remove("miss"));
+  [["g_proyecto","Proyecto / Mina"],["g_estacion","Código de estación"],["g_fecha","Fecha / Hora"],["g_tecnico","Técnico responsable"]].forEach(([id,l])=>{ if(!$(id).value.trim()){errs.push(l+" vacío"); $(id).classList.add("miss");} });
+  ALL.forEach(i=>{ const id=i.n.replace(".","_"), st=itemState(i.n);
+    if(!st.estado){ errs.push(`Ítem ${i.n} sin estado`); $("st_"+id).classList.add("miss"); }
+    else if(st.estado==="CN" && !String(st.obs||"").trim()){ errs.push(`Ítem ${i.n} marcado CN sin observación`); $("f_"+id+"_obs").classList.add("miss"); }
+  });
+  return errs;
+}
+
+/* ---------- Exportación ---------- */
+function fieldsText(i){ const st=itemState(i.n); return (i.fields||[]).map(f=>{const v=st[f.k]; return v?`${f.lbl}: ${v}${f.unit?" "+f.unit:""}`:"";}).filter(Boolean).join("; "); }
+function fname(ext){ const g=state.general; return `Protocolo_${(g.estacion||"estacion").replace(/[^\w-]+/g,"_")}_${(g.fecha||"").slice(0,10)}.${ext}`; }
+function buildCSV(){
+  const g=state.general, q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
+  const rows=[["Proyecto/Mina",g.proyecto],["Código estación",g.estacion],["Fecha/Hora",g.fecha],["Técnico",g.tecnico],["Modelo equipo",g.modelo],[],["Ítem","Sección","Actividad","Estado","Valores","Observaciones"]];
+  ALL.forEach(i=>{const st=itemState(i.n); rows.push([i.n,i.sec.title,i.t,LBL[st.estado||""],fieldsText(i),st.obs]);});
+  rows.push([],["Observaciones generales",g.obsGeneral],["Firma técnico",g.firmaTecNombre,g.firmaTecFecha],["Firma supervisor",g.firmaSupNombre,g.firmaSupFecha]);
+  return "﻿"+rows.map(r=>r.map(q).join(";")).join("\r\n");
+}
+function buildReport(){
+  const g=state.general, c=refresh();
+  const row=i=>{const st=itemState(i.n); const cls=st.estado==="C"?"ok":st.estado==="CN"?"bad":"";
+    return `<tr><td>${i.n}</td><td>${esc(i.t)}</td><td class="${cls}">${LBL[st.estado||""]}</td><td>${esc(fieldsText(i))}${fieldsText(i)&&st.obs?"<br>":""}${esc(st.obs)}</td></tr>`;};
+  const sig=(src,n,f,t)=>`<div class="s"><div class="img">${src?`<img src="${src}">`:""}</div><b>${t}</b><br>Nombre: ${esc(n)}<br>Fecha: ${esc(f)}</div>`;
+  return `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>${esc(fname("html"))}</title><style>
+  body{font-family:Arial,sans-serif;font-size:11pt;color:#111;max-width:800px;margin:20px auto;padding:0 14px}
+  h1{font-size:15pt;margin:0}h2{font-size:11pt;background:#16324f;color:#fff;padding:5px 8px;margin:16px 0 0}
+  table{width:100%;border-collapse:collapse}td,th{border:1px solid #999;padding:4px 6px;vertical-align:top;font-size:10pt}
+  th{background:#eee;text-align:left}td:nth-child(3){text-align:center;font-weight:bold;width:44px}td:first-child{width:34px}
+  .ok{color:#1f7a4d}.bad{color:#b3261e;background:#fbe9e7}.gen td{width:auto!important;text-align:left!important;font-weight:normal!important}
+  .sigs{display:flex;gap:20px;margin-top:10px}.s{flex:1;font-size:10pt}.img{height:80px;border-bottom:1px solid #333;margin-bottom:4px}.img img{height:80px}
+  @media print{body{margin:0}}</style></head><body>
+  <h1>PROTOCOLO DE MANTENIMIENTO TRIMESTRAL</h1><div>Instrumentación Sísmica / Acelerógrafos · ASTTIN</div>
+  <h2>INFORMACIÓN GENERAL</h2><table class="gen">
+  <tr><td><b>Proyecto / Mina:</b> ${esc(g.proyecto)}</td><td><b>Código de estación:</b> ${esc(g.estacion)}</td></tr>
+  <tr><td><b>Fecha / Hora:</b> ${esc((g.fecha||"").replace("T"," "))}</td><td><b>Técnico responsable:</b> ${esc(g.tecnico)}</td></tr>
+  <tr><td colspan="2"><b>Modelo equipo:</b> ${esc(g.modelo)}</td></tr>
+  <tr><td colspan="2"><b>Resumen:</b> C ${c.C} · CN ${c.CN} · N/A ${c.NA} · Pendientes ${c.P}</td></tr></table>
+  ${SECTIONS.map(s=>`<h2>${esc(s.title.toUpperCase())}</h2><table><tr><th>Ítem</th><th>Actividad</th><th>Estado</th><th>${esc(s.obsLabel)}</th></tr>${s.items.map(i=>row({...i,sec:s})).join("")}</table>`).join("")}
+  <h2>OBSERVACIONES GENERALES / RECOMENDACIONES</h2><table><tr><td style="height:60px;text-align:left;font-weight:normal">${esc(g.obsGeneral).replace(/\n/g,"<br>")}</td></tr></table>
+  <h2>FIRMAS DE CONFORMIDAD</h2><div class="sigs">${sig(state.firmas.sigTec,g.firmaTecNombre,g.firmaTecFecha,"Firma Técnico ASTTIN")}${sig(state.firmas.sigSup,g.firmaSupNombre,g.firmaSupFecha,"Firma Supervisor Área / Cliente")}</div>
+  </body></html>`;
+}
+function offer(filename, data){
+  try{
+    const type=filename.endsWith(".csv")?"text/csv;charset=utf-8":filename.endsWith(".json")?"application/json":"text/html;charset=utf-8";
+    const url=URL.createObjectURL(new Blob([data],{type}));
+    const a=document.createElement("a"); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000); toast("Descargando "+filename);
+  }catch(_){ toast("No se pudo generar la descarga."); }
+}
+function printReport(){
+  const fr=document.createElement("iframe"); fr.style.cssText="position:fixed;right:0;bottom:0;width:0;height:0;border:0";
+  document.body.appendChild(fr); const d=fr.contentDocument; d.open(); d.write(buildReport()); d.close();
+  const go=()=>{ try{ fr.contentWindow.focus(); fr.contentWindow.print(); }catch(_){ toast("No se pudo abrir la impresión."); } setTimeout(()=>fr.remove(),60000); };
+  const imgs=[...d.images]; Promise.all(imgs.map(i=>i.complete?1:new Promise(r=>{i.onload=i.onerror=r;}))).then(()=>setTimeout(go,150));
+}
+$("bCsv").onclick=()=>{ readAll(); offer(fname("csv"), buildCSV()); };
+$("bRep").onclick=()=>{ readAll(); offer(fname("html"), buildReport()); };
+$("bPrint").onclick=()=>{ readAll(); printReport(); };
+
+/* ---------- Historial local (en este dispositivo) ---------- */
+const HKEY="asttin_protocolos";
+let rows=[], storageOK=true;
+function loadHist(){ try{ rows=JSON.parse(localStorage.getItem(HKEY)||"[]"); }catch(_){ rows=[]; storageOK=false; } rows.sort((a,b)=>(b.savedAt||"").localeCompare(a.savedAt||"")); }
+function persistHist(){ try{ localStorage.setItem(HKEY,JSON.stringify(rows)); return true; }catch(e){ toast(e?.name==="QuotaExceededError"?"Almacenamiento lleno: exporte un respaldo y elimine registros antiguos.":"No se pudo guardar en este navegador."); return false; } }
+function newId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function renderHist(){
+  $("histInfo").textContent = rows.length+" registro"+(rows.length===1?"":"s")+" en este dispositivo";
+  if(!storageOK){ $("hist").innerHTML='<div class="empty">Este navegador no permite guardar datos (modo privado o bloqueado). Use CSV, Informe o Respaldo.</div>'; return; }
+  if(!rows.length){ $("hist").innerHTML='<div class="empty">Aún no hay protocolos guardados en este dispositivo.</div>'; return; }
+  $("hist").innerHTML=`<table><thead><tr><th>Fecha</th><th>Estación</th><th>Proyecto</th><th>Técnico</th><th>Resultado</th><th></th></tr></thead><tbody>${rows.map(r=>{
+    const g=r.state?.general||{}, cn=r.resumen?.CN||0;
+    return `<tr><td>${esc((g.fecha||"").replace("T"," "))}</td><td>${esc(g.estacion)}</td><td>${esc(g.proyecto)}</td><td>${esc(g.tecnico)}</td>
+    <td><span class="tag ${cn?"bad":"ok"}">${cn?cn+" CN":"Conforme"}</span></td>
+    <td style="text-align:right;white-space:nowrap"><button class="btn sm" data-open="${esc(r.id)}">Abrir</button> <button class="btn sm danger" data-del="${esc(r.id)}">Eliminar</button></td></tr>`;}).join("")}</tbody></table>`;
+}
+$("hist").addEventListener("click",async e=>{
+  const o=e.target.dataset.open, d=e.target.dataset.del;
+  if(o){ const r=rows.find(x=>x.id===o); if(!r) return;
+    if(/^(Cambios|Borrador)/.test($("status").textContent)){ if(!await modal("¿Abrir otro protocolo?","<p>Los cambios no guardados del formulario actual se perderán.</p>",[["Cancelar",false],["Abrir",true,"pri"]])) return; }
+    state=JSON.parse(JSON.stringify(r.state)); state.firmas ||= {sigTec:"",sigSup:""}; currentId=r.id; writeAll(); dirty(false); saveDraft(); window.scrollTo({top:0,behavior:"smooth"}); toast("Protocolo cargado."); }
+  if(d){ if(!await modal("Eliminar protocolo","<p>Esta acción no se puede deshacer.</p>",[["Cancelar",false],["Eliminar",true,"danger"]])) return;
+    rows=rows.filter(x=>x.id!==d); if(persistHist()){ if(currentId===d){currentId=null; dirty(true);} renderHist(); toast("Eliminado."); } }
+});
+$("bSave").onclick=async()=>{
+  readAll(); const errs=validate();
+  if(errs.length){ const go=await modal("Protocolo incompleto",`<p>Faltan ${errs.length} dato(s):</p><ul>${errs.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`,[["Revisar",false,"pri"],["Guardar igual",true]]); if(!go) return; }
+  const c=refresh();
+  const rec={id:currentId||newId(), state:JSON.parse(JSON.stringify(state)), resumen:{C:c.C,CN:c.CN,NA:c.NA,P:c.P}, savedAt:new Date().toISOString()};
+  const prev=rows; rows=[rec,...rows.filter(x=>x.id!==rec.id)];
+  if(persistHist()){ currentId=rec.id; dirty(false); saveDraft(); renderHist(); toast("Protocolo guardado en este dispositivo."); } else rows=prev;
+};
+$("bNew").onclick=async()=>{
+  if(!await modal("Nuevo protocolo","<p>Se limpiará el formulario. Los cambios no guardados se perderán.</p>",[["Cancelar",false],["Limpiar",true,"pri"]])) return;
+  state=blank(); currentId=null; writeAll(); dirty(false); saveDraft(); document.querySelectorAll(".miss").forEach(e=>e.classList.remove("miss")); window.scrollTo({top:0});
+};
+/* Respaldo / importación */
+$("bBak").onclick=()=>{ if(!rows.length){ toast("No hay registros para respaldar."); return; } offer(`Respaldo_protocolos_${new Date().toISOString().slice(0,10)}.json`, JSON.stringify({app:"asttin-protocolo",v:1,protocolos:rows},null,1)); };
+$("bImp").onclick=()=>$("fImp").click();
+$("fImp").onchange=async e=>{
+  const f=e.target.files[0]; e.target.value=""; if(!f) return;
+  try{ const j=JSON.parse(await f.text()); const list=Array.isArray(j)?j:j.protocolos;
+    if(!Array.isArray(list)) throw 0;
+    let n=0; const map=new Map(rows.map(r=>[r.id,r]));
+    list.forEach(r=>{ if(r&&r.id&&r.state){ const ex=map.get(r.id); if(!ex||(r.savedAt||"")>(ex.savedAt||"")){ map.set(r.id,r); n++; } } });
+    const prev=rows; rows=[...map.values()].sort((a,b)=>(b.savedAt||"").localeCompare(a.savedAt||""));
+    if(persistHist()){ renderHist(); toast(`${n} protocolo(s) importado(s).`); } else rows=prev;
+  }catch(_){ toast("El archivo no es un respaldo válido."); }
+};
+loadHist(); renderHist();
+
+/* ---------- Inicio ---------- */
+try{ const d=JSON.parse(localStorage.getItem("asttin_draft")||"null"); if(d?.state){ state=d.state; state.firmas ||= {sigTec:"",sigSup:""}; currentId=d.currentId||null; } }catch(_){}
+writeAll(); dirty(false);
+</script>
+</body>
+</html>
