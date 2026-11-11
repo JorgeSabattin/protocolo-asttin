@@ -76,7 +76,7 @@ canvas.pad{width:100%;height:130px;border:1px dashed #a9b1ab;border-radius:8px;b
 .hist th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);border-bottom:1px solid var(--line);padding:6px 6px}
 .hist td{border-bottom:1px solid #eceeea;padding:8px 6px;vertical-align:middle}
 .tag{font-family:"IBM Plex Mono",monospace;font-size:12px;padding:2px 7px;border-radius:99px}
-.tag.ok{background:var(--okbg);color:var(--ok)}.tag.bad{background:var(--badbg);color:var(--bad)}
+.tag.pend{background:#fff4e0;color:#8a5a00}.tag.ok{background:var(--okbg);color:var(--ok)}.tag.bad{background:var(--badbg);color:var(--bad)}
 .empty{color:var(--muted);font-size:13.5px;padding:8px 0}
 .modal{position:fixed;inset:0;background:rgba(20,28,26,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
 .modal.on{display:flex}
@@ -313,7 +313,7 @@ function Pad(cv){
   const pos=e=>{const r=cv.getBoundingClientRect(); return [e.clientX-r.left,e.clientY-r.top];};
   cv.addEventListener("pointerdown",e=>{drawing=true; last=pos(e); cv.setPointerCapture(e.pointerId);});
   cv.addEventListener("pointermove",e=>{ if(!drawing) return; const p=pos(e); ctx.beginPath(); ctx.moveTo(...last); ctx.lineTo(...p); ctx.stroke(); last=p; has=true; });
-  const end=()=>{ if(!drawing) return; drawing=false; if(has){ img=cv.toDataURL("image/png"); state.firmas[cv.id]=img; dirty(true); saveDraft(); } };
+  const end=()=>{ if(!drawing) return; drawing=false; if(has){ img=cv.toDataURL("image/png"); state.firmas[cv.id]=img; const fd=$(cv.id==="sigTec"?"f_tec_f":"f_sup_f"); if(!fd.value){ const t=new Date(); t.setMinutes(t.getMinutes()-t.getTimezoneOffset()); fd.value=t.toISOString().slice(0,10); readAll(); } dirty(true); saveDraft(); } };
   cv.addEventListener("pointerup",end); cv.addEventListener("pointercancel",end);
   new ResizeObserver(size).observe(cv);
   return { clear(){ const r=cv.getBoundingClientRect(); ctx.clearRect(0,0,r.width,r.height); img=""; has=false; state.firmas[cv.id]=""; },
@@ -403,7 +403,7 @@ function renderHist(){
   $("hist").innerHTML=`<table><thead><tr><th>Fecha</th><th>Estación</th><th>Proyecto</th><th>Técnico</th><th>Resultado</th><th></th></tr></thead><tbody>${rows.map(r=>{
     const g=r.state?.general||{}, cn=r.resumen?.CN||0;
     return `<tr><td>${esc((g.fecha||"").replace("T"," "))}</td><td>${esc(g.estacion)}</td><td>${esc(g.proyecto)}</td><td>${esc(g.tecnico)}</td>
-    <td><span class="tag ${cn?"bad":"ok"}">${cn?cn+" CN":"Conforme"}</span></td>
+    <td>${(r.resumen?.P||0)?`<span class="tag pend">Incompleto (${r.resumen.P})</span>`:`<span class="tag ${cn?"bad":"ok"}">${cn?cn+" CN":"Conforme"}</span>`}</td>
     <td style="text-align:right;white-space:nowrap"><button class="btn sm" data-open="${esc(r.id)}">Abrir</button> <button class="btn sm danger" data-del="${esc(r.id)}">Eliminar</button></td></tr>`;}).join("")}</tbody></table>`;
 }
 $("hist").addEventListener("click",async e=>{
